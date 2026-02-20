@@ -36,6 +36,23 @@ const createDoctor = async (payload: ICreateDoctorPayload) => {
   });
 
   try {
+    const isRegistrationNumberExists = await prisma.doctor.findUnique({
+      where: { registrationNumber: payload.doctor.registrationNumber },
+    });
+    if (isRegistrationNumberExists) {
+      console.log("Doctor with Registration number exists");
+      throw new Error(
+        `Doctor with registration number ${payload.doctor.registrationNumber} already exists`,
+      );
+    }
+    const isEmailExists = await prisma.doctor.findUnique({
+      where: { email: payload.doctor.email },
+    });
+    if (isEmailExists) {
+      throw new Error(
+        `Doctor with email ${payload.doctor.email} already exists`,
+      );
+    }
     const result = await prisma.$transaction(async (tx) => {
       const doctor = await tx.doctor.create({
         data: {
@@ -113,11 +130,10 @@ const createDoctor = async (payload: ICreateDoctorPayload) => {
   }
 };
 
-const createAdmin = async () => {};
+// const createAdmin = async () => {};
 
-const createSuperAdmin = async () => {};
+// const createSuperAdmin = async () => {};
 
 export const UserService = {
   createDoctor,
-  createAdmin,
 };

@@ -17,7 +17,7 @@ const globalErrorHandler = async (
   res.status(statusCode).json({
     success: false,
     message: message,
-    error: err,
+    error: err.message,
   });
 };
 

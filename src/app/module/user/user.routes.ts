@@ -5,4 +5,5 @@ const router = Router();
 
 router.post("/create-doctor", UserControllers.createDoctor);
 
+
 export const UserRoutes = router;
