@@ -41,9 +41,7 @@ const createDoctor = async (payload: ICreateDoctorPayload) => {
     });
     if (isRegistrationNumberExists) {
       console.log("Doctor with Registration number exists");
-      throw new Error(
-        `Doctor with registration number ${payload.doctor.registrationNumber} already exists`,
-      );
+      throw new Error(`Invalid registration number.`);
     }
     const isEmailExists = await prisma.doctor.findUnique({
       where: { email: payload.doctor.email },
@@ -86,7 +84,6 @@ const createDoctor = async (payload: ICreateDoctorPayload) => {
           gender: true,
           appointmentFee: true,
           qualification: true,
-          currentWorkingPlace: true,
           designation: true,
           createdAt: true,
           updatedAt: true,

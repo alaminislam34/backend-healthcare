@@ -42,6 +42,9 @@ const updateDoctorById = async (id: string, payload: IUpdateDoctorPayload) => {
     if (!doctor) {
       throw new Error("Doctor not found");
     }
+    if(doctor.isDeleted){
+      throw new Error("Doctor is deleted");
+    }
     const updatedDoctor = await prisma.doctor.update({
       where: { id },
       data: payload,
