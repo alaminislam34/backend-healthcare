@@ -1,6 +1,12 @@
+import status from "http-status";
 import { UserRole, UserStatus } from "../../../generated/prisma/enums";
+import AppError from "../../errorHelpers/AppError";
 import { auth } from "../../lib/auth";
 import { prisma } from "../../lib/prisma";
+import { tokenUtils } from "../../utils/token";
+import { Response } from "express";
+import ms from "ms";
+import { cookieUtils } from "../../utils/cookie";
 
 interface IRegisterPayload {
   name: string;
@@ -22,7 +28,7 @@ const registerPatient = async (payLoad: IRegisterPayload) => {
     },
   });
   if (!data.user) {
-    throw new Error("Failed to register patient");
+    throw new AppError(status.BAD_REQUEST, "Failed to register patient");
   }
 
   try {
@@ -34,7 +40,25 @@ const registerPatient = async (payLoad: IRegisterPayload) => {
       },
     });
 
-    return { ...data, patient };
+    const accessToken = tokenUtils.getAccessToken({
+      userId: data.user.id,
+      role: data.user.role,
+      name: data.user.name,
+      email: data.user.email,
+      status: data.user.status,
+      emailVerified: data.user.emailVerified,
+    });
+
+    const refreshToken = tokenUtils.getRefreshToken({
+      userId: data.user.id,
+      role: data.user.role,
+      name: data.user.name,
+      email: data.user.email,
+      status: data.user.status,
+      emailVerified: data.user.emailVerified,
+    });
+
+    return { ...data, patient, accessToken, refreshToken };
   } catch (error) {
     console.log("Transaction error:", error);
     await prisma.user.delete({
@@ -49,7 +73,7 @@ const registerPatient = async (payLoad: IRegisterPayload) => {
 const loginUser = async (payload: ILoginPayload) => {
   const { email, password } = payload;
   if (!email || !password) {
-    throw new Error("Email and password are required");
+    throw new AppError(status.BAD_REQUEST, "Email and password are required");
   }
   const data = await auth.api.signInEmail({
     body: {
@@ -58,13 +82,41 @@ const loginUser = async (payload: ILoginPayload) => {
     },
   });
   if (data.user.status === UserStatus.BLOCKED) {
-    throw new Error("Your account is blocked. Please contact support.");
+    throw new AppError(
+      status.FORBIDDEN,
+      "Your account is blocked. Please contact support.",
+    );
   }
   if (data.user.status === UserStatus.DELETED) {
-    throw new Error("Your account is deleted. Please contact support.");
+    throw new AppError(
+      status.GONE,
+      "Your account is deleted. Please contact support.",
+    );
   }
 
-  return data;
+  const accessToken = tokenUtils.getAccessToken({
+    userId: data.user.id,
+    role: data.user.role,
+    name: data.user.name,
+    email: data.user.email,
+    status: data.user.status,
+    emailVerified: data.user.emailVerified,
+  });
+
+  const refreshToken = tokenUtils.getRefreshToken({
+    userId: data.user.id,
+    role: data.user.role,
+    name: data.user.name,
+    email: data.user.email,
+    status: data.user.status,
+    emailVerified: data.user.emailVerified,
+  });
+
+  return {
+    accessToken,
+    refreshToken,
+    ...data,
+  };
 };
 
 export const AuthServices = {

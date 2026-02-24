@@ -1,3 +1,5 @@
+import status from "http-status";
+import AppError from "../../errorHelpers/AppError";
 import { prisma } from "../../lib/prisma";
 
 const getAllDoctors = async () => {
@@ -25,7 +27,7 @@ const getDoctorById = async (id: string) => {
       where: { id },
     });
     if (!doctor) {
-      throw new Error("Doctor not found");
+      throw new AppError(status.NOT_FOUND, "Doctor not found");
     }
     return doctor;
   } catch (error) {
@@ -40,10 +42,10 @@ const updateDoctorById = async (id: string, payload: IUpdateDoctorPayload) => {
       where: { id },
     });
     if (!doctor) {
-      throw new Error("Doctor not found");
+      throw new AppError(status.NOT_FOUND, "Doctor not found");
     }
-    if(doctor.isDeleted){
-      throw new Error("Doctor is deleted");
+    if (doctor.isDeleted) {
+      throw new AppError(status.GONE, "Doctor is deleted");
     }
     const updatedDoctor = await prisma.doctor.update({
       where: { id },
@@ -66,7 +68,7 @@ const deleteDoctorById = async (id: string) => {
       },
     });
     if (!deletedDoctor) {
-      throw new Error("Doctor not found");
+      throw new AppError(status.NOT_FOUND, "Doctor not found");
     }
     return deletedDoctor;
   } catch (error) {
