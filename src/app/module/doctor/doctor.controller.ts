@@ -3,6 +3,7 @@ import { catchAsync } from "../../shared/catchAsync";
 import { sendResponse } from "../../shared/sendResponse";
 import { DoctorService } from "./doctor.service";
 import status from "http-status";
+import { IUpdateDoctorPayload } from "./doctor.interface";
 
 const getAllDoctors = catchAsync(async (req: Request, res: Response) => {
   const doctors = await DoctorService.getAllDoctors();
@@ -42,11 +43,11 @@ const updateDoctorById = catchAsync(async (req: Request, res: Response) => {
 
 const deleteDoctorById = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  await DoctorService.deleteDoctorById(id as string);
+  const result = await DoctorService.deleteDoctorById(id as string);
   sendResponse(res, {
     statusCode: status.OK,
     success: true,
-    message: "Doctor deleted successfully",
+    message: result.message,
   });
 });
 

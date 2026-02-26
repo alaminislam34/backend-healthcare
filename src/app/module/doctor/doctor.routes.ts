@@ -16,13 +16,13 @@ router.get(
   DoctorController.getDoctorById,
 );
 
-router.put(
+router.patch(
   "/:id",
   checkAuth(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.DOCTOR),
   DoctorController.updateDoctorById,
 );
 
-router.patch(
+router.delete(
   "/:id",
   checkAuth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
   DoctorController.deleteDoctorById,
