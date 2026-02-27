@@ -3,6 +3,7 @@ import AppError from "../../errorHelpers/AppError";
 import { prisma } from "../../lib/prisma";
 import { IUpdateAdminPayload } from "./admin.interface";
 import { UserStatus } from "../../../generated/prisma/browser";
+import { IRequestUser } from "../../interfaces/request.interface";
 
 const getAllAdmins = async () => {
   const result = await prisma.admin.findMany({
@@ -44,12 +45,19 @@ const updateAdmin = async (id: string, payload: IUpdateAdminPayload) => {
   return updateAdmin;
 };
 
-const deleteAdmin = async (id: string) => {
+const deleteAdmin = async (id: string, user: IRequestUser) => {
   const isAdminExist = await prisma.admin.findUnique({
     where: { id, isDeleted: false },
   });
   if (!isAdminExist) {
     throw new AppError(status.NOT_FOUND, "Admin not found");
+  }
+
+  if (isAdminExist.userId === user.userId) {
+    throw new AppError(
+      status.UNAUTHORIZED,
+      "You cannot delete your own account",
+    );
   }
 
   const result = await prisma.$transaction(async (tx) => {

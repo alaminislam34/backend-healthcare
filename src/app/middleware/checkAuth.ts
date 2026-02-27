@@ -78,6 +78,12 @@ export const checkAuth =
               "Unauthorized access. You do not have permission to access this resource.",
             );
           }
+
+          req.user = {
+            userId: user.id,
+            email: user.email,
+            role: user.role,
+          };
         }
 
         const accessToken = cookieUtils.getCookie(req, "accessToken");
@@ -99,7 +105,7 @@ export const checkAuth =
             "Unauthorized access. Invalid access token.",
           );
         }
-        
+
         if (
           authRoles.length > 0 &&
           !authRoles.includes(verifiedToken.data.role as UserRole)
