@@ -17,5 +17,7 @@ router.get(
   ),
   AuthControllers.getMe,
 );
+router.post("/refresh-token", AuthControllers.getNewToken);
+router.post("/change-password", AuthControllers.changePassword);
 
 export const AuthRoutes = router;
