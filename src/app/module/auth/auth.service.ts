@@ -155,6 +155,8 @@ const getMe = async (user: IRequestUser) => {
   return isUserExists;
 };
 
+
+
 export const AuthServices = {
   registerPatient,
   loginUser,
