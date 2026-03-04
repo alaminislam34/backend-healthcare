@@ -1,7 +1,6 @@
 import { JwtPayload, SignOptions } from "jsonwebtoken";
 import { jwtUtils } from "./jwt";
 import { envVars } from "../../config/env";
-import ms, { StringValue } from "ms";
 import { cookieUtils } from "./cookie";
 import { Response } from "express";
 
@@ -28,8 +27,7 @@ const setAccessTokenCookie = (res: Response, token: string) => {
     httpOnly: true,
     secure: true,
     sameSite: "strict",
-    // 1 day in seconds
-    maxAge: 60 * 60 * 60 * 1000,
+    maxAge: 24 * 60 * 60 * 1000,
   });
 };
 
@@ -38,7 +36,8 @@ const setRefreshTokenCookie = (res: Response, token: string) => {
     httpOnly: true,
     secure: true,
     sameSite: "strict",
-    maxAge: 60 * 60 * 60 * 1000, // 7 days in seconds
+    // 7 days
+    maxAge: 7 * 24 * 60 * 60 * 1000, 
   });
 };
 
@@ -47,7 +46,8 @@ const setBetterAuthSessionTokenCookie = (res: Response, token: string) => {
     httpOnly: true,
     secure: true,
     sameSite: "strict",
-    maxAge: 60 * 60 * 60 * 1000, // 7 days in seconds
+    // 1 days
+    maxAge: 24 * 60 * 60 * 1000,
   });
 };
 
