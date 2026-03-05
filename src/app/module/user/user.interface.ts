@@ -5,15 +5,15 @@ export interface ICreateDoctorPayload {
   doctor: {
     name: string;
     email: string;
-    profilePhoto: string;
-    contactNumber: string;
-    address: string;
+    profilePhoto?: string;
+    contactNumber?: string;
+    address?: string;
     registrationNumber: string;
-    experience: number;
+    experience?: number;
     gender: Gender;
     appointmentFee: number;
     qualification: string;
-    currentWorkingPlace: string;
+    currentWorkingPlace?: string;
     designation: string;
   };
   specialties: string[];
@@ -24,7 +24,7 @@ export interface ICreateAdmin {
   admin: {
     name: string;
     email: string;
-    profilePhoto: string;
-    contactNumber: string;
+    profilePhoto?: string;
+    contactNumber?: string;
   };
 }

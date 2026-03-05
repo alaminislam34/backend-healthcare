@@ -10,15 +10,15 @@ export const createDoctorZodSchema = z.object({
       .max(100, "too long name"),
     email: z.email("Invalid email address"),
     registrationNumber: z.string("Registration number is required"),
-    profilePhoto: z.string("Profile photo is required"),
+    profilePhoto: z.string("Profile photo is required").optional(),
     contactNumber: z
       .string("Contact number is required")
       .min(11, "Number must be at least 11 digits")
-      .max(14, "Number must be at most 14 digits"),
-    address: z.string("Address is required"),
+      .max(14, "Number must be at most 14 digits").optional(),
+    address: z.string("Address is required").optional(),
     experience: z
       .number("Experience is required")
-      .nonnegative("Experience must be a non-negative number"),
+      .nonnegative("Experience must be a non-negative number").optional(),
     appointmentFee: z
       .number("Appointment fee is required")
       .nonnegative("Appointment fee must be a non-negative number"),
@@ -38,8 +38,8 @@ const createAdminValidationSchema = z.object({
     admin: z.object({
       name: z.string().min(1, "Name is required"),
       email: z.email("Invalid email format"),
-      profilePhoto: z.url("Invalid URL format"),
-      contactNumber: z.string().min(1, "Contact number is required"),
+      profilePhoto: z.url("Invalid URL format").optional(),
+      contactNumber: z.string().min(1, "Contact number is required").optional(),
     }),
   }),
 });

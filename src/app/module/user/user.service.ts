@@ -149,6 +149,7 @@ const createAdmin = async (payload: ICreateAdmin) => {
       email: payload.admin.email,
       password: payload.password,
       role: UserRole.ADMIN,
+      needPasswordChange: true,
     },
   });
 

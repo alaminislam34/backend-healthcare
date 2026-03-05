@@ -324,20 +324,27 @@ const logoutFromAllDevices = async (sessionToken: string) => {
 };
 
 const verifyEmail = async (email: string, otp: string) => {
-  const result = await auth.api.verifyEmailOTP({
-    body: {
-      email: email,
-      otp: otp,
-    },
-  });
-
-  if (result.status && !result.user.emailVerified) {
-    await prisma.user.update({
-      where: { email: email },
-      data: {
-        emailVerified: true,
+  try {
+    const result = await auth.api.verifyEmailOTP({
+      body: {
+        email: email,
+        otp: otp,
       },
     });
+
+    if (result.status && !result.user.emailVerified) {
+      await prisma.user.update({
+        where: { email: email },
+        data: {
+          emailVerified: true,
+        },
+      });
+    }
+  } catch (error: any) {
+    throw new AppError(
+      status.BAD_REQUEST,
+      error.message || error.body?.message,
+    );
   }
 };
 

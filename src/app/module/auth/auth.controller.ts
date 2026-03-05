@@ -5,6 +5,7 @@ import { sendResponse } from "../../shared/sendResponse";
 import status from "http-status";
 import { tokenUtils } from "../../utils/token";
 import { cookieUtils } from "../../utils/cookie";
+import AppError from "../../errorHelpers/AppError";
 
 const registerPatient = catchAsync(async (req: Request, res: Response) => {
   const payload = req.body;
@@ -55,6 +56,10 @@ const loginUser = catchAsync(async (req: Request, res: Response) => {
 const getMe = catchAsync(async (req: Request, res: Response) => {
   const user = req.user;
   const result = await AuthServices.getMe(user);
+
+  if (!user) {
+    throw new AppError(status.UNAUTHORIZED, "Unauthorized");
+  }
 
   sendResponse(res, {
     statusCode: status.OK,
