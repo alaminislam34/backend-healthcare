@@ -6,9 +6,9 @@ import status from "http-status";
 import { tokenUtils } from "../../utils/token";
 import { cookieUtils } from "../../utils/cookie";
 import { envVars } from "../../../config/env";
-import { betterAuth } from "better-auth";
 import { auth } from "../../lib/auth";
 import { ISession } from "./auth.interface";
+import AppError from "../../errorHelpers/AppError";
 
 const registerPatient = catchAsync(async (req: Request, res: Response) => {
   const payload = req.body;
@@ -59,6 +59,10 @@ const loginUser = catchAsync(async (req: Request, res: Response) => {
 const getMe = catchAsync(async (req: Request, res: Response) => {
   const user = req.user;
   const result = await AuthServices.getMe(user);
+
+  if (!user) {
+    throw new AppError(status.UNAUTHORIZED, "Unauthorized");
+  }
 
   sendResponse(res, {
     statusCode: status.OK,
@@ -125,7 +129,6 @@ const logoutUser = catchAsync(async (req: Request, res: Response) => {
     secure: true,
     sameSite: "none",
   });
-
   cookieUtils.clearCookie(res, "better-auth.session_token", {
     httpOnly: true,
     secure: true,
