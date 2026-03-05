@@ -15,6 +15,11 @@ interface EnvConfig {
   REFRESH_TOKEN_EXPIRES_IN: string;
   BETTER_AUTH_SESSION_TOKEN_EXPIRES_IN: string;
   BETTER_AUTH_SESSION_TOKEN_UPDATE_EXPIRES_IN: string;
+  EMAIL_SENDER_SMTP_HOST: string;
+  EMAIL_SENDER_SMTP_PORT: string;
+  EMAIL_SENDER_SMTP_USER: string;
+  EMAIL_SENDER_SMTP_PASS: string;
+  EMAIL_SENDER_SMTP_FROM: string;
 }
 
 const envConfig = (): EnvConfig => {
@@ -30,6 +35,11 @@ const envConfig = (): EnvConfig => {
     "REFRESH_TOKEN_EXPIRES_IN",
     "BETTER_AUTH_SESSION_TOKEN_EXPIRES_IN",
     "BETTER_AUTH_SESSION_TOKEN_UPDATE_EXPIRES_IN",
+    "EMAIL_SENDER_SMTP_HOST",
+    "EMAIL_SENDER_SMTP_PORT",
+    "EMAIL_SENDER_SMTP_USER",
+    "EMAIL_SENDER_SMTP_PASS",
+    "EMAIL_SENDER_SMTP_FROM",
   ];
   requiredVars.forEach((variable) => {
     if (!process.env[variable]) {
@@ -53,6 +63,11 @@ const envConfig = (): EnvConfig => {
       process.env.BETTER_AUTH_SESSION_TOKEN_EXPIRES_IN!,
     BETTER_AUTH_SESSION_TOKEN_UPDATE_EXPIRES_IN:
       process.env.BETTER_AUTH_SESSION_TOKEN_UPDATE_EXPIRES_IN!,
+    EMAIL_SENDER_SMTP_HOST: process.env.EMAIL_SENDER_SMTP_HOST!,
+    EMAIL_SENDER_SMTP_PORT: process.env.EMAIL_SENDER_SMTP_PORT!,
+    EMAIL_SENDER_SMTP_USER: process.env.EMAIL_SENDER_SMTP_USER!,
+    EMAIL_SENDER_SMTP_PASS: process.env.EMAIL_SENDER_SMTP_PASS!,
+    EMAIL_SENDER_SMTP_FROM: process.env.EMAIL_SENDER_SMTP_FROM!,
   };
 };
 

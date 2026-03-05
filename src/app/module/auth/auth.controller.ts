@@ -4,6 +4,7 @@ import { AuthServices } from "./auth.service";
 import { sendResponse } from "../../shared/sendResponse";
 import status from "http-status";
 import { tokenUtils } from "../../utils/token";
+import { cookieUtils } from "../../utils/cookie";
 
 const registerPatient = catchAsync(async (req: Request, res: Response) => {
   const payload = req.body;
@@ -97,12 +98,83 @@ const changePassword = catchAsync(async (req: Request, res: Response) => {
   tokenUtils.setAccessTokenCookie(res, accessToken);
   tokenUtils.setRefreshTokenCookie(res, refreshToken);
   tokenUtils.setBetterAuthSessionTokenCookie(res, token as string);
-  
+
   sendResponse(res, {
     statusCode: status.OK,
     success: true,
     message: "Password changed successfully",
     data: result,
+  });
+});
+
+const logoutUser = catchAsync(async (req: Request, res: Response) => {
+  const sessionToken = req.cookies["better-auth.session_token"];
+  await AuthServices.logoutUser(sessionToken);
+
+  cookieUtils.clearCookie(res, "accessToken", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+  });
+  cookieUtils.clearCookie(res, "refreshToken", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+  });
+
+  cookieUtils.clearCookie(res, "better-auth.session_token", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+  });
+
+  sendResponse(res, {
+    statusCode: status.OK,
+    success: true,
+    message: "User logged out successfully",
+  });
+});
+
+const logoutFromAllDevices = catchAsync(async (req: Request, res: Response) => {
+  const sessionToken = req.cookies["better-auth.session_token"];
+  const result = await AuthServices.logoutFromAllDevices(sessionToken);
+
+  sendResponse(res, {
+    statusCode: status.OK,
+    success: true,
+    message: "Logged out from all devices successfully",
+    data: result,
+  });
+});
+
+const verifyEmail = catchAsync(async (req: Request, res: Response) => {
+  const { email, otp } = req.body;
+  await AuthServices.verifyEmail(email, otp);
+
+  sendResponse(res, {
+    statusCode: status.OK,
+    success: true,
+    message: "Email verified successfully",
+  });
+});
+
+const forgotPassword = catchAsync(async (req: Request, res: Response) => {
+  const { email } = req.body;
+  await AuthServices.forgotPassword(email);
+  sendResponse(res, {
+    statusCode: status.OK,
+    success: true,
+    message: "Password reset OTP sent to email successfully",
+  });
+});
+
+const resetPassword = catchAsync(async (req: Request, res: Response) => {
+  const { email, otp, newPassword } = req.body;
+  await AuthServices.resetPassword(email, otp, newPassword);
+  sendResponse(res, {
+    statusCode: status.OK,
+    success: true,
+    message: "Password reset successfully",
   });
 });
 
@@ -112,4 +184,9 @@ export const AuthControllers = {
   getMe,
   getNewToken,
   changePassword,
+  logoutUser,
+  logoutFromAllDevices,
+  verifyEmail,
+  forgotPassword,
+  resetPassword,
 };

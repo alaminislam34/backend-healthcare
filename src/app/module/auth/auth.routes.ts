@@ -19,5 +19,10 @@ router.get(
 );
 router.post("/refresh-token", AuthControllers.getNewToken);
 router.post("/change-password", AuthControllers.changePassword);
+router.post("/logout", AuthControllers.logoutUser);
+router.post("/logout-all-devices", AuthControllers.logoutFromAllDevices);
+router.post("/verify-email", AuthControllers.verifyEmail);
+router.post("/forgot-password", AuthControllers.forgotPassword);
+router.post("/reset-password", AuthControllers.resetPassword);
 
 export const AuthRoutes = router;

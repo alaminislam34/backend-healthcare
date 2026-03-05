@@ -38,7 +38,7 @@ const createAdminValidationSchema = z.object({
     admin: z.object({
       name: z.string().min(1, "Name is required"),
       email: z.email("Invalid email format"),
-      profilePhoto: z.url("Invalid URL format").optional(),
+      profilePhoto: z.url("Invalid URL format"),
       contactNumber: z.string().min(1, "Contact number is required"),
     }),
   }),
