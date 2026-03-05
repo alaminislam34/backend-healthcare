@@ -225,6 +225,9 @@ const changePassword = async (
       Authorization: `Bearer ${sessionToken}`,
     }),
   });
+
+  const userId = session?.user.id;
+
   if (!session) {
     throw new AppError(status.UNAUTHORIZED, "Invalid session token");
   }
@@ -395,6 +398,45 @@ const resetPassword = async (
   });
 };
 
+const googleLoginSuccess = async (session: Record<string, any>) => {
+  const isPatientExists = await prisma.patient.findUnique({
+    where: { userId: session.user.id },
+  });
+
+  if (!isPatientExists) {
+    await prisma.patient.create({
+      data: {
+        userId: session.user.id,
+        name: session.user.name,
+        email: session.user.email,
+      },
+    });
+  }
+
+  const accessToken = tokenUtils.getAccessToken({
+    userId: session.user.id,
+    role: session.user.role,
+    name: session.user.name,
+    email: session.user.email,
+    status: session.user.status,
+    emailVerified: session.user.emailVerified,
+  });
+
+  const refreshToken = tokenUtils.getRefreshToken({
+    userId: session.user.id,
+    role: session.user.role,
+    name: session.user.name,
+    email: session.user.email,
+    status: session.user.status,
+    emailVerified: session.user.emailVerified,
+  });
+
+  return {
+    accessToken,
+    refreshToken,
+  };
+};
+
 export const AuthServices = {
   registerPatient,
   loginUser,
@@ -406,4 +448,5 @@ export const AuthServices = {
   verifyEmail,
   forgotPassword,
   resetPassword,
+  googleLoginSuccess,
 };

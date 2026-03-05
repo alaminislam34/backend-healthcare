@@ -24,5 +24,8 @@ router.post("/logout-all-devices", AuthControllers.logoutFromAllDevices);
 router.post("/verify-email", AuthControllers.verifyEmail);
 router.post("/forgot-password", AuthControllers.forgotPassword);
 router.post("/reset-password", AuthControllers.resetPassword);
+router.get("/login/google", AuthControllers.googleLogin);
+router.get("/google/success", AuthControllers.googleLoginSuccess);
+router.get("/oauth/auth", AuthControllers.handleOAuthError);
 
 export const AuthRoutes = router;
