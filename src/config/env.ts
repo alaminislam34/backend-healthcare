@@ -23,6 +23,9 @@ interface EnvConfig {
   GOOGLE_CLIENT_ID: string;
   GOOGLE_CLIENT_SECRET: string;
   FRONTEND_URL: string;
+  CLOUDINARY_CLOUD_NAME: string;
+  CLOUDINARY_API_KEY: string;
+  CLOUDINARY_API_SECRET: string;
 }
 
 const envConfig = (): EnvConfig => {
@@ -46,6 +49,9 @@ const envConfig = (): EnvConfig => {
     "GOOGLE_CLIENT_ID",
     "GOOGLE_CLIENT_SECRET",
     "FRONTEND_URL",
+    "CLOUDINARY_CLOUD_NAME",
+    "CLOUDINARY_API_KEY",
+    "CLOUDINARY_API_SECRET",
   ];
   requiredVars.forEach((variable) => {
     if (!process.env[variable]) {
@@ -77,6 +83,9 @@ const envConfig = (): EnvConfig => {
     GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID!,
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET!,
     FRONTEND_URL: process.env.FRONTEND_URL!,
+    CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME!,
+    CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY!,
+    CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET!,
   };
 };
 

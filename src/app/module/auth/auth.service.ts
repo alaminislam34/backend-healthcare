@@ -225,8 +225,19 @@ const changePassword = async (
       Authorization: `Bearer ${sessionToken}`,
     }),
   });
+  if (session && session.user) {
+    const userId = session.user.id as string;
+    const account = await prisma.account.findFirst({
+      where: { userId },
+    });
 
-  const userId = session?.user.id;
+    if (account?.providerId === "google") {
+      throw new AppError(
+        status.BAD_REQUEST,
+        "Password change not allowed for Google accounts",
+      );
+    }
+  }
 
   if (!session) {
     throw new AppError(status.UNAUTHORIZED, "Invalid session token");
@@ -355,8 +366,27 @@ const forgotPassword = async (email: string) => {
   const isUserExists = await prisma.user.findUnique({
     where: { email: email },
   });
+
   if (!isUserExists) {
     throw new AppError(status.NOT_FOUND, "User not found");
+  }
+
+  if (isUserExists) {
+    const user = await prisma.user.findUnique({
+      where: { email: email },
+    });
+
+    if (user) {
+      const account = await prisma.account.findFirst({
+        where: { userId: user.id },
+      });
+      if (account?.providerId === "google") {
+        throw new AppError(
+          status.BAD_REQUEST,
+          "Password change not allowed for Google accounts",
+        );
+      }
+    }
   }
 
   if (isUserExists.emailVerified === false) {
